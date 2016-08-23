@@ -1,0 +1,10 @@
+<ns0:record xmlns:ns0="http://www.openarchives.org/OAI/2.0/oai_dc/">
+  <ns0:language>en</ns0:language>
+  <ns0:title>Cloud Atlas</ns0:title>
+  <ns0:description>Everything is connected</ns0:description>
+  <ns0:rights>open</ns0:rights>
+  <ns0:date created="2012"/>
+  <ns0:identifier>105</ns0:identifier>
+  <ns0:creator>jj</ns0:creator>
+  <ns0:publisher>EUDAT</ns0:publisher>
+</ns0:record>

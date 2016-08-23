@@ -1,0 +1,2 @@
+lxml==3.6.1
+neo4j-driver==1.0.2
