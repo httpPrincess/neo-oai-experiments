@@ -1,25 +1,37 @@
-from neo4j.v1 import GraphDatabase, basic_auth
+from neo4j.v1 import GraphDatabase, basic_auth, exceptions
 from lxml import etree
 
 
 def connect_to_neo(url="bolt://0.0.0.0:32768", user='neo4j', password='neo'):
-    driver = GraphDatabase.driver(url, auth=basic_auth(user, password))
-    return driver.session()
+    try:
+        driver = GraphDatabase.driver(url, auth=basic_auth(user, password))
+        return driver.session()
+    except exceptions.ProtocolError:
+        print('Unable to connect to neo4j at %s' % url)
+        exit(-1)
 
 
 def get_records():
+    """ get some data from neo4j,
+
+    this is just an example that works with neo4j default movies database
+    """
     session = connect_to_neo()
     result = session.run(
         "Match (m:Movie) return id(m) as id, m.title as title, m.tagline as tagline, m.released as released")
 
     for record in result:
-        yield {'id': record['id'], 'title': record['title'],
-               'description': record['tagline'],
-               'released': record['released']}
+        yield {
+            'id': record['id'],
+            'title': record['title'],
+            'description': record['tagline'],
+            'released': record['released']
+        }
 
 
 def get_xml(record_id, creator, publisher, language, rights, title,
             description, date):
+    """ transforms datat into somethig close to DC Xml representation """
     namespace = '{http://www.openarchives.org/OAI/2.0/oai_dc/}'
     root = etree.Element(namespace + 'record')
 
@@ -32,8 +44,8 @@ def get_xml(record_id, creator, publisher, language, rights, title,
     d = etree.SubElement(root, namespace + 'description')
     d.text = description
 
-    r = etree.SubElement(root, namespace + 'rights')
-    r.text = rights
+    rwr = etree.SubElement(root, namespace + 'rights')
+    rwr.text = rights
 
     etree.SubElement(root, namespace + 'date', created=str(date))
 
